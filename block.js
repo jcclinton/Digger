@@ -4,9 +4,13 @@ game.block = (function(){
 		;
 
 
-	function initRect(rect){
-
-		rect.when('mousedown', function(e){
+	function initRect(obj){
+		obj.rect.when('mousedown', function(e){
+			if(obj.isDirty()){
+				obj.unDirty();
+			}else if(obj.isElgibleToBeDirty()){
+				obj.dirty();
+			}
 		});
 
 	};
@@ -24,7 +28,7 @@ game.block = (function(){
 
 		obj.desc = 'block_'+options.x+'_'+options.y;
 		obj.charges = game.chargesPerBlock;
-		obj.dirty = false;
+		obj.dirtyFlag = false;
 
 		obj.rect = options.rect;
 		obj.x = options.x;
@@ -33,7 +37,7 @@ game.block = (function(){
 		obj.id = game.factory.getNextId();
 
 
-		initRect(obj.rect);
+		initRect(obj);
 
 		obj.resetColor();
 
@@ -48,6 +52,7 @@ game.block = (function(){
 	baseBlock.colors[3] = '#332000';
 	baseBlock.colors[4] = '#442800';
 	baseBlock.colors[5] = '#553000';
+	baseBlock.colorDirty = '#800';
 
 	baseBlock.resetColor = function(){
 		this.rect.fill = this.colors[this.charges];
@@ -58,16 +63,19 @@ game.block = (function(){
 	};
 
 	baseBlock.isDirty = function(){
-		return !this.isEmpty && this.dirty;
+		return !this.isEmpty && this.dirtyFlag;
 	};
 
 	baseBlock.dirty = function(){
+		this.rect.fill = this.colorDirty;
+		this.dirtyFlag = true;
 	};
 
-	baseBlock.undirty = function(){
+	baseBlock.unDirty = function(){
 	};
 
 	baseBlock.isElgibleToBeDirty = function(){
+		return true;
 	};
 
 	baseBlock.elgibleToBeOnDirtyList = function(){

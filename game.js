@@ -58,8 +58,9 @@ var game = (function(){
 			if(block && block !== state.currentBlock){
 				state.currentBlock = block;
 				if(block.isDirty){
-					block.undirty();
+					block.unDirty();
 				}else if(block.isElgibleToBeDirty()){
+					console.log('dirtying block');
 					block.dirty();
 				}
 			}
@@ -72,7 +73,7 @@ var game = (function(){
 				;
 
 			if(block && block !== state.currentBlock){
-				if(state.currentBlock){
+				if(state.currentBlock && !state.currentBlock.isDirty()){
 					state.currentBlock.resetColor();
 				}
 

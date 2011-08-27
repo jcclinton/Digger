@@ -12,8 +12,8 @@ var gameWorld = (function(){
 
 
 	me.initLists = function(){
-		me.dirtyList = game.factory.createList();
-		me.edgeList = game.factory.createList();
+		this.dirtyList = game.factory.createList();
+		this.edgeList = game.factory.createList();
 	};
 
 
