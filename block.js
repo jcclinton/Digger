@@ -1,5 +1,15 @@
 game.block = (function(){
-	var me = {};
+	var me = {}
+		, baseBlock = {}
+		;
+
+
+	function initRect(rect){
+
+		rect.when('mousedown', function(e){
+		});
+
+	};
 
 	me.create = function(options){
 		var obj = {};
@@ -8,13 +18,24 @@ game.block = (function(){
 
 		initRect(obj.rect);
 
+		game.factory.extend(obj, baseBlock);
+
 		return obj;
 	};
 
-	function initRect(rect){
+	baseBlock.isDirty = function(){
+		return !this.isEmpty && this.dirty;
+	};
 
-		rect.when('mousedown', function(e){
-		});
+	baseBlock.dirty = function(){
+
+	};
+
+	baseBlock.undirty = function(){
+
+	};
+
+	baseBlock.isElgibleToBeDirty = function(){
 
 	};
 

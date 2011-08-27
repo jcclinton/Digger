@@ -33,6 +33,14 @@ var gameWorld = (function(){
 			this.graph = new Graph(rawArray);
 		};
 
+
+		obj.getBlockFromPixels = function(x, y){
+			var o = me.pixelsToBlocks(x, y)
+				;
+
+			return game.world.boardArray[o.x][o.y];
+		};
+
 		obj.getRawArray = function(){
 			var i
 				, j
@@ -46,7 +54,7 @@ var gameWorld = (function(){
 			for(i = 0, w = this.boardArray.length; i < w; i++){
 				inner = [];
 				for(j = 0, h = this.boardArray[i].length; j < h; j++){
-					v = this.boardArray[i][j].blocking;
+					v = this.boardArray[i][j].isEmpty ? 0 : 1;
 					inner.push(v); // row
 				}
 				raw.push(inner); // column
@@ -102,7 +110,7 @@ var gameWorld = (function(){
 			for(j = 0, h = this.boardArray[i].length; j < h; j++){
 				o = this.boardArray[i][j];
 				rect = o.rect;
-				if(o.blocking){
+				if(!o.isEmpty){
 					rect.fill = brown;
 					line.desc = "rect_"+i+'_'+j;
 					boardLayer.append(rect);
@@ -149,8 +157,10 @@ var gameWorld = (function(){
 
 				rect = new Rectangle(blockSize, blockSize, o);
 
-				o.blocking = v
+				o.isEmpty = !v;
 				o.rect = rect;
+				o.dirty = false;
+				o.charges = game.chargesPerBlock;
 				obj = game.block.create(o);
 				inner.push(obj); // row
 			}

@@ -42,12 +42,26 @@ var game = (function(){
 		//textLayer.append(score);
 
 
+
+
+
 		state.clicked = function(e){
-			console.log('clicked');
+			var x = e.offsetX || e.layerX || e.x
+				, y = e.offsetY || e.layerY || e.y
+				, block = game.world.getBlockFromPixels(x, y)
+				;
+
+			if(block && block !== state.currentBlock){
+				state.currentBlock = block;
+				if(block.isDirty){
+					block.undirty();
+				}else if(block.isElgibleToBeDirty()){
+					block.dirty();
+				}
+			}
 		};
 
 		state.notclicked = function(e){
-			console.log('not clicked');
 		};
 
 
@@ -55,14 +69,20 @@ var game = (function(){
 
 
 		canvas.when('mousedown', function(e){
-  		canvas.removeEventListener('mousemove', state.notclicked);
+			var x = e.offsetX || e.layerX || e.x
+				, y = e.offsetY || e.layerY || e.y
+				;
 
+  		canvas.removeEventListener('mousemove', state.notclicked);
   		canvas.when('mousemove', state.clicked);
 		});
 
 		canvas.when('mouseup', function(e){
-  		canvas.removeEventListener('mousemove', state.clicked);
+			var x = e.offsetX || e.layerX || e.x
+				, y = e.offsetY || e.layerY || e.y
+				;
 
+  		canvas.removeEventListener('mousemove', state.clicked);
   		canvas.when('mousemove', state.notclicked);
 		});
   };
