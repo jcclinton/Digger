@@ -6,7 +6,16 @@ game.block = (function(){
 
 		game.factory.extend(obj, options);
 
+		initRect(obj.rect);
+
 		return obj;
+	};
+
+	function initRect(rect){
+
+		rect.when('mousedown', function(e){
+		});
+
 	};
 
 	return me;

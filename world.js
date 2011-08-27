@@ -5,12 +5,24 @@ var gameWorld = (function(){
 		, blockSize = 20
 		;
 
+	me.dirtyEdgeBlocks = 0;
+
+	me.pixelsToBlocks = function(x, y){
+		var blockx = x/blockSize | 0
+			, blocky = y/blockSize | 0
+			;
+		return {x: blockx, y: blocky};
+	};
+
+	me.blocksToPixels = function(x, y){
+		return {x: x*blockSize, y: y*blockSize};
+	};
+
 	me.create = function(){
 		var obj = {};
 
 		obj.width = width;
 		obj.height = height;
-		obj.bockSize = blockSize;
 
 
 		obj.boardArray = createBoard();
@@ -88,30 +100,15 @@ var gameWorld = (function(){
 		//inner blocking rectangles
 		for(i = 0, w = this.boardArray.length; i < w; i++){
 			for(j = 0, h = this.boardArray[i].length; j < h; j++){
-				if(this.boardArray[i][j].blocking){
-					im = blockSize*i;
-					jm = blockSize*j;
-
-					// coordinates start at top left corner of rect
-					// todo: fix this to work with the coords
-					o = {x: im, y: jm};
-
-					rect = new Rectangle(blockSize, blockSize, o);
+				o = this.boardArray[i][j];
+				rect = o.rect;
+				if(o.blocking){
 					rect.fill = brown;
 					line.desc = "rect_"+i+'_'+j;
 					boardLayer.append(rect);
 
 				}else{
 					continue;
-					im = blockSize*i;
-					jm = blockSize*j;
-
-					// coordinates start at top left corner of rect
-					// todo: fix this to work with the coords
-					o = {x: im, y: jm};
-
-					rect = new Rectangle(blockSize, blockSize, o);
-					//rect.fill = brown;
 					rect.opacity = 0.0;
 					line.desc = "rect_"+i+'_'+j;
 					boardLayer.append(rect);
@@ -127,12 +124,15 @@ var gameWorld = (function(){
 	function createBoard(){
 		var i
 			, j
-			, w = width/blockSize // 100
-			, h = height/blockSize // 60
+			, o = me.pixelsToBlocks(width, height)
+			, w = o.x
+			, h = o.y
 			, inner
 			, outer = []
 			, v
 			, obj
+			, rect
+			, o
 			;
 
 		for(i = 0; i < w; i++){
@@ -142,7 +142,16 @@ var gameWorld = (function(){
 				if(i < w/2){
 					v = 1;
 				}
-				obj = game.block.create({blocking: v});
+
+				// coordinates start at top left corner of rect
+				// todo: fix this to work with the coords
+				o = me.blocksToPixels(i, j);
+
+				rect = new Rectangle(blockSize, blockSize, o);
+
+				o.blocking = v
+				o.rect = rect;
+				obj = game.block.create(o);
 				inner.push(obj); // row
 			}
 			outer.push(inner); // column

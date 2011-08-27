@@ -14,6 +14,7 @@ var game = (function(){
 			, textLayer = new CanvasNode()
 			, elem
 			, score
+			, state = {}
 			;
 
 		me.setInitialData();
@@ -41,14 +42,28 @@ var game = (function(){
 		//textLayer.append(score);
 
 
-		canvas.when('mousemove', function(e){
-		});
+		state.clicked = function(e){
+			console.log('clicked');
+		};
+
+		state.notclicked = function(e){
+			console.log('not clicked');
+		};
+
+
+		canvas.when('mousemove', state.notclicked);
 
 
 		canvas.when('mousedown', function(e){
+  		canvas.removeEventListener('mousemove', state.notclicked);
+
+  		canvas.when('mousemove', state.clicked);
 		});
 
 		canvas.when('mouseup', function(e){
+  		canvas.removeEventListener('mousemove', state.clicked);
+
+  		canvas.when('mousemove', state.notclicked);
 		});
   };
 
