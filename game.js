@@ -17,15 +17,17 @@ var game = (function(){
 			, state = {}
 			;
 
+		me.chargesPerBlock = 5;
+
 		me.setInitialData();
 
-		this.world = gameWorld.create();
+		this.world = createWorld();
 
 		canvas = this.canvas = new Canvas(document.body, this.world.width, this.world.height);
 
 		game.factory.init(canvas);
 
-		this.world.draw(canvas);
+		this.world.drawOnce(canvas);
 
   	canvas.fill = 'rgba(0,0,0, 0.1)';
 
@@ -62,6 +64,22 @@ var game = (function(){
 		};
 
 		state.notclicked = function(e){
+			var x = e.offsetX || e.layerX || e.x
+				, y = e.offsetY || e.layerY || e.y
+				, block = game.world.getBlockFromPixels(x, y)
+				;
+
+			if(block && block !== state.currentBlock){
+				if(state.currentBlock){
+					state.currentBlock.resetColor();
+				}
+
+				state.currentBlock = block;
+
+				if(block.isEdgeBlock()){
+					block.highlightColor();
+				}
+			}
 		};
 
 

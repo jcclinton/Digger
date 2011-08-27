@@ -1,4 +1,4 @@
-var gameWorld = (function(){
+var createWorld = function(canvas){
 	var me = {}
 		, height = 200
 		, width = 350
@@ -7,70 +7,52 @@ var gameWorld = (function(){
 
 	me.dirtyEdgeBlocks = 0;
 
-	me.pixelsToBlocks = function(x, y){
-		var blockx = x/blockSize | 0
-			, blocky = y/blockSize | 0
+	me.width = width;
+	me.height = height;
+
+
+	me.boardArray = createBoard();
+
+
+	me.getRawArray = function(){
+		var i
+			, j
+			, w
+			, h
+			, inner = []
+			, raw = []
+			, v
 			;
-		return {x: blockx, y: blocky};
-	};
 
-	me.blocksToPixels = function(x, y){
-		return {x: x*blockSize, y: y*blockSize};
-	};
-
-	me.create = function(){
-		var obj = {};
-
-		obj.width = width;
-		obj.height = height;
-
-
-		obj.boardArray = createBoard();
-
-
-		obj.refreshGraph = function(){
-			var rawArray = this.getRawArray();
-			this.graph = new Graph(rawArray);
-		};
-
-
-		obj.getBlockFromPixels = function(x, y){
-			var o = me.pixelsToBlocks(x, y)
-				;
-
-			return game.world.boardArray[o.x][o.y];
-		};
-
-		obj.getRawArray = function(){
-			var i
-				, j
-				, w
-				, h
-				, inner = []
-				, raw = []
-				, v
-				;
-
-			for(i = 0, w = this.boardArray.length; i < w; i++){
-				inner = [];
-				for(j = 0, h = this.boardArray[i].length; j < h; j++){
-					v = this.boardArray[i][j].isEmpty ? 0 : 1;
-					inner.push(v); // row
-				}
-				raw.push(inner); // column
+		for(i = 0, w = this.boardArray.length; i < w; i++){
+			inner = [];
+			for(j = 0, h = this.boardArray[i].length; j < h; j++){
+				v = this.boardArray[i][j].isEmpty ? 0 : 1;
+				inner.push(v); // row
 			}
+			raw.push(inner); // column
+		}
 
-			return raw;
-		};
-
-		obj.refreshGraph();
-
-		obj.draw = draw;
-
-		return obj;
+		return raw;
 	};
 
-	function draw(canvas){
+
+	me.refreshGraph = function(){
+		var rawArray = this.getRawArray();
+		this.graph = new Graph(rawArray);
+	};
+
+
+	me.getBlockFromPixels = function(x, y){
+		var o = pixelsToBlocks(x, y)
+			, b = game.world.boardArray[o.x][o.y]
+			;
+
+		return b;
+	};
+
+
+	me.drawOnce = function(canvas){
 		var boardLayer = new CanvasNode()
 			, line
 			, i
@@ -83,6 +65,8 @@ var gameWorld = (function(){
 			, h
 			, brown = '#443300';
 			;
+
+		this.refreshGraph();
 
 		boardLayer.desc = "Board Layer";
 		canvas.append(boardLayer);
@@ -111,7 +95,6 @@ var gameWorld = (function(){
 				o = this.boardArray[i][j];
 				rect = o.rect;
 				if(!o.isEmpty){
-					rect.fill = brown;
 					line.desc = "rect_"+i+'_'+j;
 					boardLayer.append(rect);
 
@@ -128,18 +111,39 @@ var gameWorld = (function(){
 	};
 
 
+	return me;
+
+
+
+
+	// PRIVATE FUNCTIONS
+
+
+
+
+	function pixelsToBlocks(x, y){
+		var blockx = x/blockSize | 0
+			, blocky = y/blockSize | 0
+			;
+		return {x: blockx, y: blocky};
+	};
+
+	function blocksToPixels(x, y){
+		return {x: x*blockSize, y: y*blockSize};
+	};
+
+
 
 	function createBoard(){
 		var i
 			, j
-			, o = me.pixelsToBlocks(width, height)
+			, o = pixelsToBlocks(width, height)
 			, w = o.x
 			, h = o.y
 			, inner
 			, outer = []
 			, v
 			, obj
-			, rect
 			, o
 			;
 
@@ -153,14 +157,11 @@ var gameWorld = (function(){
 
 				// coordinates start at top left corner of rect
 				// todo: fix this to work with the coords
-				o = me.blocksToPixels(i, j);
+				o = blocksToPixels(i, j);
 
-				rect = new Rectangle(blockSize, blockSize, o);
+				o.rect = new Rectangle(blockSize, blockSize, o);
 
 				o.isEmpty = !v;
-				o.rect = rect;
-				o.dirty = false;
-				o.charges = game.chargesPerBlock;
 				obj = game.block.create(o);
 				inner.push(obj); // row
 			}
@@ -169,7 +170,4 @@ var gameWorld = (function(){
 
 		return outer;
 	}
-
-
-	return me;
-}());
+};
