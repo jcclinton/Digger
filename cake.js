@@ -3969,7 +3969,7 @@ Canvas = Klass(CanvasNode, {
   onFrame : function(time, timeDelta) {
     this.elementNodeZIndexCounter = 0
     var ctx = this.getContext()
-    try {
+    //try {
       var realTime = new Date().getTime()
       this.currentRealElapsed = (realTime - this.realTime)
       this.currentRealFps = 1000 / this.currentRealElapsed
@@ -4025,7 +4025,7 @@ Canvas = Klass(CanvasNode, {
         this.elapsed = 0
         this.startTime = new Date().getTime()
       }
-    } catch(e) {
+    /*} catch(e) {
       if (ctx) {
         // screwed up, context is borked
         try {
@@ -4036,7 +4036,7 @@ Canvas = Klass(CanvasNode, {
       }
       delete this.context
       throw(e)
-    }
+    }*/
   },
 
   /**
