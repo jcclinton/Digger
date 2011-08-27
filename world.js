@@ -1,4 +1,4 @@
-var createWorld = function(canvas){
+var gameWorld = (function(){
 	var me = {}
 		, height = 200
 		, width = 350
@@ -11,7 +11,10 @@ var createWorld = function(canvas){
 	me.height = height;
 
 
-	me.boardArray = createBoard();
+	me.initLists = function(){
+		me.dirtyList = game.factory.createList();
+		me.edgeList = game.factory.createList();
+	};
 
 
 	me.getRawArray = function(){
@@ -45,13 +48,14 @@ var createWorld = function(canvas){
 
 	me.getBlockFromPixels = function(x, y){
 		var o = pixelsToBlocks(x, y)
-			, b = game.world.boardArray[o.x][o.y]
+			, b = this.boardArray[o.x][o.y]
 			;
 
 		return b;
 	};
 
 
+	// only draws, doesnt manipulate data
 	me.drawOnce = function(canvas){
 		var boardLayer = new CanvasNode()
 			, line
@@ -106,35 +110,12 @@ var createWorld = function(canvas){
 				}
 			}
 		}
-
-
-	};
-
-
-	return me;
-
-
-
-
-	// PRIVATE FUNCTIONS
-
-
-
-
-	function pixelsToBlocks(x, y){
-		var blockx = x/blockSize | 0
-			, blocky = y/blockSize | 0
-			;
-		return {x: blockx, y: blocky};
-	};
-
-	function blocksToPixels(x, y){
-		return {x: x*blockSize, y: y*blockSize};
 	};
 
 
 
-	function createBoard(){
+
+	me.createBoard = function(){
 		var i
 			, j
 			, o = pixelsToBlocks(width, height)
@@ -169,5 +150,28 @@ var createWorld = function(canvas){
 		}
 
 		return outer;
+	};
+
+
+	return me;
+
+
+
+
+	// PRIVATE FUNCTIONS
+
+
+
+
+	function pixelsToBlocks(x, y){
+		var blockx = x/blockSize | 0
+			, blocky = y/blockSize | 0
+			;
+		return {x: blockx, y: blocky};
 	}
-};
+
+	function blocksToPixels(x, y){
+		return {x: x*blockSize, y: y*blockSize};
+	}
+
+}());

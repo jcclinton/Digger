@@ -21,7 +21,9 @@ var game = (function(){
 
 		me.setInitialData();
 
-		this.world = createWorld();
+		this.world = gameWorld;
+		this.world.initLists();
+		this.world.boardArray = this.world.createBoard();
 
 		canvas = this.canvas = new Canvas(document.body, this.world.width, this.world.height);
 

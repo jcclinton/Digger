@@ -30,6 +30,7 @@ game.block = (function(){
 		obj.x = options.x;
 		obj.y = options.y;
 		obj.isEmpty = options.isEmpty;
+		obj.id = game.factory.getNextId();
 
 
 		initRect(obj.rect);

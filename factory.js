@@ -99,8 +99,7 @@ game.factory = (function(){
 		return obj;
 	};
 
-
-	me.unitList = (function(){
+	me.createList = function(){
 		var lst = {
 			"table": {},
 		};
@@ -121,7 +120,10 @@ game.factory = (function(){
 		};
 
 		return lst;
-	}());
+	};
+
+
+	me.unitList = me.createList();
 
 
 	return me;
