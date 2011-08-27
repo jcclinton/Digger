@@ -48,10 +48,44 @@ var gameWorld = (function(){
 
 	me.getBlockFromPixels = function(x, y){
 		var o = pixelsToBlocks(x, y)
-			, b = this.boardArray[o.x][o.y]
+			, b
 			;
 
+		try{
+			b = this.boardArray[o.x][o.y]
+		}catch(e){
+			console.warn('caught: ' + e);
+		}
+
 		return b;
+	};
+
+	me.fillEdgeList = function(){
+		var blocks
+			, i
+			, j
+			, lx
+			, ly
+			, ablocks
+			, key
+			, block
+			, adjacentBlock
+			, e = game.world.edgeList
+			;
+
+		for(i = 0, lx = game.world.boardArray.length; i < lx; i++){
+			for(j = 0, ly = game.world.boardArray[i].length; j < ly; j++){
+				block = game.world.boardArray[i][j];
+				ablocks = block.getAdjacentBlocks();
+				for(key in ablocks){
+					adjacentBlock = ablocks[key];
+					if(adjacentBlock.isEmpty && !block.isEmpty){
+						e.add(block.id, block);
+						break;
+					}
+				}
+			}
+		}
 	};
 
 
@@ -143,6 +177,8 @@ var gameWorld = (function(){
 				o.rect = new Rectangle(blockSize, blockSize, o);
 
 				o.isEmpty = !v;
+				o.blockx = i;
+				o.blocky = j;
 				obj = game.block.create(o);
 				inner.push(obj); // row
 			}

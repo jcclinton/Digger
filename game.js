@@ -24,6 +24,7 @@ var game = (function(){
 		this.world = gameWorld;
 		this.world.initLists();
 		this.world.boardArray = this.world.createBoard();
+		this.world.fillEdgeList();
 
 		canvas = this.canvas = new Canvas(document.body, this.world.width, this.world.height);
 
@@ -79,7 +80,7 @@ var game = (function(){
 
 				state.currentBlock = block;
 
-				if(block.isEdgeBlock()){
+				if(!block.isDirty() && block.isEdgeBlock() || block.isAdjacentToDirty()){
 					block.highlightColor();
 				}
 			}

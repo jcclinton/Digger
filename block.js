@@ -17,24 +17,21 @@ game.block = (function(){
 
 	me.create = function(options){
 		var obj = {}
-			, f = function(){}
+			, block = function(){}
 			, o
 			;
 
 
-		game.factory.extend(f.prototype, baseBlock);
+		game.factory.extend(block.prototype, baseBlock);
 
-		obj = new f();
+		obj = new block();
 
 		obj.desc = 'block_'+options.x+'_'+options.y;
 		obj.charges = game.chargesPerBlock;
 		obj.dirtyFlag = false;
-
-		obj.rect = options.rect;
-		obj.x = options.x;
-		obj.y = options.y;
-		obj.isEmpty = options.isEmpty;
 		obj.id = game.factory.getNextId();
+
+		game.factory.extend(obj, options);
 
 
 		initRect(obj);
@@ -67,34 +64,184 @@ game.block = (function(){
 	};
 
 	baseBlock.dirty = function(){
+		var ablocks
+			, i
+			, l
+			, block
+			;
+
 		this.rect.fill = this.colorDirty;
 		this.dirtyFlag = true;
+		game.world.dirtyList.add(this.id, this);
+		if(game.world.edgeList.get(this.id)){
+			game.world.dirtyEdgeBlocks++;
+		}
+		ablocks = this.getAdjacentBlocks();
+		for(i = 0, l = ablocks.length; i < l; i++){
+			block = ablocks[i];
+			if(!block.isEmpty){
+				block.adjacentToDirty = true;
+			}
+		}
 	};
 
 	baseBlock.unDirty = function(){
+		var ablocks
+			, i
+			, l
+			, block
+			;
+
+		this.resetColor();
+		this.dirtyFlag = false;
+		game.world.dirtyList.remove(this.id);
+		if(game.world.edgeList.get(this.id)){
+			game.world.dirtyEdgeBlocks--;
+		}
+		ablocks = this.getAdjacentBlocks();
+		for(i = 0, l = ablocks.length; i < l; i++){
+			block = ablocks[i];
+			if(!block.isEmpty && !block.isAdjacentToDirty()){
+				block.adjacentToDirty = false;
+			}
+		}
+	};
+
+	baseBlock.isAdjacentToDirty = function(){
+		var ablocks
+			, block
+			, i
+			, l
+			;
+
+		ablocks = this.getAdjacentBlocks();
+		for(i = 0, l = ablocks.length; i < l; i++){
+			block = ablocks[i];
+			if(block.isDirty()){
+				return true;
+			}
+		}
+		return false;
 	};
 
 	baseBlock.isElgibleToBeDirty = function(){
-		return true;
+		var isClean = !this.isDirty()
+			, onEdge = game.world.edgeList.get(this.id)
+			, isNearDirty = this.adjacentToDirty
+			;
+		return isClean && ( onEdge || isNearDirty );
 	};
 
-	baseBlock.elgibleToBeOnDirtyList = function(){
-	};
+	/*baseBlock.isElgibleToBeOnDirtyList = function(){
+		var ablocks
+			, key
+			, block
+			;
 
-	baseBlock.elgibleToBeOnEdgeList = function(){
-	};
+		ablocks = this.getAdjacentBlocks();
+		for(key in ablocks){
+			block = ablocks[key];
+			if(block.isDirty()){
+				return true;
+			}
+		}
+		return false;
+	};*/
 
-	baseBlock.isNextToADirtyBlock = function(){
-	};
+	/*baseBlock.isElgibleToBeOnEdgeList = function(){
+	};*/
 
 	baseBlock.isEdgeBlock = function(){
-		return true;
+		var ablocks
+			, i
+			, l
+			, block
+			;
+
+		ablocks = this.getAdjacentBlocks();
+		for(i = 0, l = ablocks.length; i < l; i++){
+			block = ablocks[i];
+			if(block.isEmpty){
+				return true;
+			}
+		}
+		return false;
 	};
 
 	baseBlock.decrementCharge = function(){
+		var ablocks
+			, i
+			, l
+			, block
+			;
+
+		this.charges--;
+		this.resetColor();
+		if(this.charges > 0){
+			return this.charges;
+		}
+
+
+		this.isEmpty = true;
+		game.world.dirtyEdgeBlocks--;
+		game.world.edgeList.remove(this.id);
+		this.rect.opacity = 0.0;
+
+		ablocks = this.getAdjacentBlocks();
+		for(i = 0, l = ablocks.length; i < l; i++){
+			block = ablocks[i];
+			if(!block.isEmpty()){
+				game.world.edgeList.add(block.id);
+				if(block.isDirty()){
+					game.world.dirtyEdgeBlocks++;
+				}
+			}
+		}
 	};
 
 	baseBlock.getAdjacentBlocks = function(){
+		var i
+			, j
+			, xArr
+			, yArr
+			, blocks = game.world.boardArray
+			, blockx = this.blockx
+			, blocky = this.blocky
+			, lx
+			, ly
+			, ret = []
+			, block
+			, x
+			, y
+			;
+
+		if(this.blockx <= 0){
+			xArr = [0,1];
+		}else if(!blocks[blockx+1]){
+			xArr = [blockx-1, blockx];
+		}else{
+			xArr = [blockx-1, blockx, blockx+1];
+		}
+
+		if(this.blocky <= 0){
+			yArr = [0,1];
+		}else if(blocks[blockx][blocky+1] === void 0){
+			yArr = [blocky-1, blocky];
+		}else{
+			yArr = [blocky-1, blocky, blocky+1];
+		}
+
+		for(i = 0, lx = xArr.length; i < lx; i++){
+			for(j = 0, ly = yArr.length; j < ly; j++){
+				x = xArr[i];
+				y = yArr[j];
+				block = blocks[x][y];
+				if(x !== blockx || y !== blocky){
+					ret.push(blocks[x][y]);
+				}
+			}
+		}
+		return ret;
 	};
 
 
