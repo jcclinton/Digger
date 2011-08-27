@@ -127,7 +127,7 @@ shapeControl: function(t){
 
 	// first use hero to kill guards
 	if(this.unit.data.isMe){
-		guards = game.unit.factory.unitList.guards;
+		guards = game.factory.unitList.guards;
 		for(id in guards){
 			x = this.x;
 			y = this.y;
@@ -139,7 +139,7 @@ shapeControl: function(t){
 		}
 	}else if(this.unit.data.isGuard){
 		// then use guards to kill inmates
-		inmates = game.unit.factory.unitList.inmates;
+		inmates = game.factory.unitList.inmates;
 		for(id in inmates){
 			x = this.x;
 			y = this.y;
@@ -178,7 +178,7 @@ shapeControl: function(t){
 		}
 
 
-    this.scale = 2.5+Math.cos(this.offset*Math.PI*4 + t/400);
+    //this.scale = 2.5+Math.cos(this.offset*Math.PI*4 + t/400);
 	}
 	this.fill = this.shapes.fill;
 	this.stroke = this.shapes.stroke;

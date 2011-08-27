@@ -6,7 +6,6 @@ game.factory = (function(){
 
 
 	me.getNextId = (function(){
-		// all the units are over 9000!!
 		var id = 9000;
 		return function(){
 			return ++id;
@@ -14,10 +13,16 @@ game.factory = (function(){
 	})();
 
 	me.extend = function(obj){
-		for(var i = 1, l = arguments.length; i < l; i++){
-			var arg = arguments[i];
+		var i
+			, l
+			, arg
+			, e
+			;
+
+		for(i = 1, l = arguments.length; i < l; i++){
+			arg = arguments[i];
 			if(arg){
-				for(var e in arg){
+				for(e in arg){
 					obj[e] = arg[e];
 				}
 			}
@@ -25,36 +30,20 @@ game.factory = (function(){
 		return obj;
 	};
 
-	me.effect = Klass({
-	  initialize : function(canvas) {
-	    this.canvas = canvas;
-	    this.scene = new CanvasNode();
-	    this.scene.effect = this;
-	  }
-	});
-
 	me.init = function(canvas){
 		unitLayer = new CanvasNode();
 		unitLayer.desc = "Unit Layer";
 		canvas.append(unitLayer);
 	};
 
-	me.append = function(node){
-		unitLayer.append(node);
-	};
-
 	me.spawn = function(name, options){
 
-		var key
-			, defaults
+		var defaults
 			, obj
 			, map
 			, myGreatConstructor = function(){}
-			, layer
-			, initData = {}
 			, i
 			, l
-			, id
 			, klass
 			;
 
@@ -66,23 +55,23 @@ game.factory = (function(){
 			return;
 		}
 
-		myGreatConstructor.prototype = new game.unit.shapes(klass, game.canvas, options.shapes || {});
+		options.shapes = options.shapes || {};
+
+		myGreatConstructor.prototype = new game.unit.shapes(klass, game.canvas, options.shapes);
 
 
 		me.extend(myGreatConstructor.prototype, game.unit.unitBase());
 
 
-		// extend base objects
-		//me.extend( myGreatConstructor.prototype, parent );
-
 		// loop through all game-specific objects this should extend
 		if(map.extending !== void 0){
 			for(i = 0, l = map.extending.length; i < l; i++){
-				if( map.extending[i] !== void 0 && game.unit[ map.extending[i] ] ){
-					me.extend( myGreatConstructor.prototype, game.unit[ map.extending[i] ] );
-				}else{
+				if( map.extending[i] === void 0 || !game.unit[ map.extending[i] ] ){
 					console.warn(map.extending[i] + ' does not exist');
+					continue;
 				}
+
+				me.extend( myGreatConstructor.prototype, game.unit[ map.extending[i] ] );
 			}
 		}
 
@@ -93,16 +82,11 @@ game.factory = (function(){
 
 
 		defaults = {
-			isMe: false
 		};
 		map.init = map.init || {};
 		options.data = options.data || {};
 
-		me.extend(initData, defaults, map.init, options.data);
-
-		for(key in initData){
-			obj.data[key] =  initData[key];
-		}
+		me.extend(obj.data, defaults, map.init, options.data);
 
 		obj.data.id = me.getNextId();
 
@@ -118,28 +102,15 @@ game.factory = (function(){
 	me.unitList = (function(){
 		var lst = {
 			"table": {},
-			"guards": {},
-			"inmates": {}
 		};
 
 		lst.add = function(id, obj) {
-			if(obj.data.isGuard){
-				lst.guards[id] = obj;
-			}else if(obj.data.isInmate){
-				lst.inmates[id] = obj;
-			}
 			return (lst.table[id] = obj);
 		};
 
 		lst.remove = function(id) {
 			var obj =lst.table[id];
 			if(!obj) return;
-
-			if(obj.data.isInmate){
-				delete lst.inmates[id];
-			}else if(obj.data.isGuard){
-				delete lst.guards[id];
-			}
 
 			return delete lst.table[id];
 		};

@@ -24,7 +24,7 @@ window.onload = function()
 		options.shapes.x = game.world.width / 3;
 		options.shapes.y = game.world.height / 2;
 
-		//u = game.unit.factory.spawn('builder', options);
+		u = game.factory.spawn('builder', options);
 
 	},0);
 

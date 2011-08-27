@@ -6,7 +6,7 @@ game.unit.unitBase = function(){
 
 	me.destroy = function(){
 		this.scene.removeSelf();
-		game.unit.factory.unitList.remove(this.data.id);
+		game.factory.unitList.remove(this.data.id);
 		if(this.data.isGuard){
 			--game.jail.guardCount;
 		}
@@ -34,7 +34,7 @@ game.unit.unitBase = function(){
 	};
 
 	me.getExit = function(){
-		return {x: game.board.width, y: game.board.height/2};
+		return {x: game.world.width, y: game.world.height/2};
 	};
 
 	me.isAtExit = function(){
@@ -88,7 +88,7 @@ game.unit.unitBase = function(){
 			, endx
 			, endy
 			, exit
-			, nodes = game.board.graph.nodes
+			, nodes = game.world.graph.nodes
 			;
 
 		if(pos){

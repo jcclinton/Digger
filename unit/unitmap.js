@@ -7,6 +7,7 @@ game.unit.map = {
 			"selected": false
 		},
 		"extending": [
+			"builder"
 		]
 	}
 };
