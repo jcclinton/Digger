@@ -74,95 +74,16 @@ game.unit.shapes = Klass({
 		this.scene.when('keyup', function(ev) {
 			 ev.preventDefault()}
 		 );
-
-		this.scene.when('mousedown', function(e){
-			var id
-				, unit
-				, x
-				, y
-				, line
-				, ex = e.offsetX || e.layerX || e.x
-				, ey = e.offsetY || e.layerY || e.y
-				;
-
-			unit = e.canvasTarget.unit;
-			if(!unit.data.isMe){
-				return false;
-			}
-
-			x = shape.x;
-			y = shape.y;
-
-			unit.data.selected = true;
-
-			if(!shape.line){
-				shape.line = new Line(shape.x, shape.y, ex, ey);
-				this.append(shape.line);
-			}
-			shape.line.stroke = true;
-
-
-			return false;
-		});
-
-
-		this.scene.when('mouseup', function(e){
-			if(shape.line){
-				shape.line.stroke = false;
-			}
-		});
   },
 
 shapeControl: function(t){
-	var guards
-		, inmates
-		, heroDist = game.heroDist
-		, guardDist = game.guardDist
-		, id
-		, x
-		, y
-		, gx
-		, gy
+	var d
 		;
 
-	// first use hero to kill guards
-	if(this.unit.data.isMe){
-		guards = game.factory.unitList.guards;
-		for(id in guards){
-			x = this.x;
-			y = this.y;
-			gx = guards[id].shape.x;
-			gy = guards[id].shape.y;
-			if(Math.abs(gx - x) < heroDist && Math.abs(gy - y) < heroDist){
-				guards[id].destroy();
-			}
-		}
-	}else if(this.unit.data.isGuard){
-		// then use guards to kill inmates
-		inmates = game.factory.unitList.inmates;
-		for(id in inmates){
-			x = this.x;
-			y = this.y;
-			gx = inmates[id].shape.x;
-			gy = inmates[id].shape.y;
-			if(Math.abs(gx - x) < guardDist && Math.abs(gy - y) < guardDist){
-				inmates[id].destroy();
-			}
-		}
-	}
-
-	this.unit.moveUnit.call(this.unit);
+	//this.unit.moveUnit.call(this.unit);
 
 	if(this.unit.data.isMe){
-
-		var el = document.getElementById('time');
-		if(el){
-			el.innerHTML = 'Time Remaining: ' + game.timeLeft--;
-		}
-		if(game.timeLeft < 0){
-			game.canvas.stop();
-		}
-		var d = this.unit.data.range;
+		d = this.unit.data.range;
 		if ( this.root.keys.left )
 			this.x -= d;
 		if ( this.root.keys.right )
@@ -171,12 +92,6 @@ shapeControl: function(t){
 			this.y -= d;
 		if (this.root.keys.down )
 			this.y += d;
-
-		if(this.line){
-			this.line.x1 = this.x;
-			this.line.y1 = this.y;
-		}
-
 
     //this.scale = 2.5+Math.cos(this.offset*Math.PI*4 + t/400);
 	}

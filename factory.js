@@ -86,6 +86,7 @@ game.factory = (function(){
 		map.init = map.init || {};
 		options.data = options.data || {};
 
+		obj.data = {};
 		me.extend(obj.data, defaults, map.init, options.data);
 
 		obj.data.id = me.getNextId();

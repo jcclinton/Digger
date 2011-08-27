@@ -69,19 +69,14 @@ var gameWorld = (function(){
 			, inner
 			, outer = []
 			, v
-			, llimit = 40
-			, rlimit = w - llimit
-			, tlimit = 1
-			, blimit = h - tlimit
 			;
 
 		for(i = 0; i < w; i++){
 			inner = [];
 			for(j = 0; j < h; j++){
 				v = 0;
-				if( false && (j > tlimit && j < blimit && i > llimit && i < rlimit) ){
-					v = Math.random();
-					v = v > 0.2 ? 0 : 1;
+				if(i < w){
+					v = 1;
 				}
 				inner.push(v); // row
 			}
