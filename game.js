@@ -18,6 +18,7 @@ var game = (function(){
 			;
 
 		me.chargesPerBlock = 5;
+		me.digTime = 200;
 
 		me.setInitialData();
 

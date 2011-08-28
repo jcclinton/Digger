@@ -78,12 +78,15 @@ game.unit.shapes = Klass({
 
 shapeControl: function(t){
 	var d
+    , u = this.unit
+    , block
+    , moveToBlock
 		;
 
 	//this.unit.moveUnit.call(this.unit);
 
-	if(this.unit.data.isMe){
-		d = this.unit.data.range;
+	if(u.data.isMe){
+		d = u.data.range;
 		if ( this.root.keys.left )
 			this.x -= d;
 		if ( this.root.keys.right )
@@ -97,6 +100,17 @@ shapeControl: function(t){
 	}
 	this.fill = this.shapes.fill;
 	this.stroke = this.shapes.stroke;
+
+
+  if(u.data.state === 'idle' && game.world.dirtyEdgeBlocks > 0){
+    block = u.lookForBlocksToDig();
+    if(block){
+      moveToBlock = u.getMoveToBlock(block);
+      u.setMoveTo(moveToBlock);
+    }else if(u.data.state === 'moving'){
+      u.move();
+    }
+  }
  },
 
 

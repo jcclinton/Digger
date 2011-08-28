@@ -6,7 +6,7 @@ window.onload = function()
 
 		var shape
 			, i
-			, options = { shapes:{} }
+			, options = { shapes:{}, data:{} }
 			, u
 			, r = 15
 			;
@@ -23,6 +23,7 @@ window.onload = function()
 	  options.shapes.radius = r;
 		options.shapes.x = 2*game.world.width / 3;
 		options.shapes.y = game.world.height / 2;
+		options.data.state = 'idle';
 
 		u = game.factory.spawn('builder', options);
 
