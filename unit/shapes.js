@@ -101,15 +101,13 @@ shapeControl: function(t){
 	this.fill = this.shapes.fill;
 	this.stroke = this.shapes.stroke;
 
-
   if(u.data.state === 'idle' && game.world.dirtyEdgeBlocks > 0){
     block = u.lookForBlocksToDig();
     if(block){
-      moveToBlock = u.getMoveToBlock(block);
-      u.setMoveTo(moveToBlock);
-    }else if(u.data.state === 'moving'){
-      u.move();
+      //console.log('found');
     }
+  }else if(u.data.state === 'moving'){
+    u.move();
   }
  },
 

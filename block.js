@@ -68,6 +68,11 @@ game.block = (function(){
 		return !this.isEmpty && this.dirtyFlag;
 	};
 
+	baseBlock.setDirtyColor = function(){
+		this.rect.fill = this.colorDirty;
+
+	};
+
 	baseBlock.dirty = function(){
 		var ablocks
 			, i
@@ -75,7 +80,7 @@ game.block = (function(){
 			, block
 			;
 
-		this.rect.fill = this.colorDirty;
+		this.setDirtyColor();
 		this.dirtyFlag = true;
 		game.world.dirtyList.add(this.id, this);
 		if(game.world.edgeList.get(this.id)){
@@ -178,6 +183,7 @@ game.block = (function(){
 			, i
 			, l
 			, block
+			, e = game.world.edgeList
 			;
 
 		this.charges--;
@@ -191,18 +197,19 @@ game.block = (function(){
 		game.world.dirtyEdgeBlocks--;
 		game.world.edgeList.remove(this.id);
 		this.rect.opacity = 0.0;
-		block.refreshGraph();
+		game.world.refreshGraph();
 
 		ablocks = this.getAdjacentBlocks();
 		for(i = 0, l = ablocks.length; i < l; i++){
 			block = ablocks[i];
-			if(!block.isEmpty()){
-				game.world.edgeList.add(block.id);
+			if(!block.isEmpty && !e.get(block.id)){
+				e.add(block.id, block);
 				if(block.isDirty()){
 					game.world.dirtyEdgeBlocks++;
 				}
 			}
 		}
+		return 0;
 	};
 
 	baseBlock.getAdjacentBlocks = function(){

@@ -24,18 +24,37 @@ game.unit.unitBase = function(){
 
 		block = this.lookForAdjacentBlocks();
 
-		if(!block){
-			block = this.lookForAnyBlocks();
+		if(block){
+			this.data.state = 'digging';
+			this.dig(block);
+			this.colorBlock(block, true);
+			return block;
 		}
 
+		block = this.lookForAnyBlocks();
+
 		if(block){
-			block.highlightColor(1);
+			this.colorBlock(block, true);
+			this.data.state = 'moving';
 			adjacentBlock = this.getMoveToBlock(block);
 			this.setMoveTo(adjacentBlock);
+			return block;
 		}else{
 			this.data.state = 'idle';
 		}
 	};
+
+	me.colorBlock = function(block, setNewBlock){
+		if(this.data.selectedBlock && this.data.selectedBlock !== block){
+			this.data.selectedBlock.setDirtyColor();
+			this.data.selectedBlock = null;
+		}
+
+		if(setNewBlock){
+			this.data.selectedBlock = block;
+			block.highlightColor(1);
+		}
+	}
 
 	me.lookForAdjacentBlocks = function(block){
 		var blocks
@@ -76,6 +95,8 @@ game.unit.unitBase = function(){
 		var that = this
 			;
 
+		this.colorBlock(block, false);
+
 		setTimeout(function(){
 			var charges = block.decrementCharge();
 			if(charges <= 0){
@@ -87,10 +108,11 @@ game.unit.unitBase = function(){
 	};
 
 	me.setMoveTo = function(){
-		this.data.state = 'moving';
+		//this.data.state = 'moving';
 	};
 
 	me.move = function(){
+		this.data.state = 'idle';
 	};
 
 	return me;
