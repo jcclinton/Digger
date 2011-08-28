@@ -1,0 +1,9 @@
+This is a simple demo of a worker destroying walls.
+
+Instructions:
+-walls elgible for demolition will show as green when you hover over them
+-click the green walls to mark them for demolition
+-the blue walls is the next wall the worker will destroy
+-red walls are marked for demolition
+
+currently the pathfinding is not hooked up, therefore to move, click the worker and move him adjacent to a red or blue wall.
