@@ -51,12 +51,17 @@ game.block = (function(){
 	baseBlock.colors[5] = '#553000';
 	baseBlock.colorDirty = '#800';
 
+	baseBlock.highlightColors = [];
+	baseBlock.highlightColors[0] = '#080';
+	baseBlock.highlightColors[1] = '#008';
+
 	baseBlock.resetColor = function(){
 		this.rect.fill = this.colors[this.charges];
 	};
 
-	baseBlock.highlightColor = function(){
-		this.rect.fill = '#080';
+	baseBlock.highlightColor = function(num){
+		num = num || 0;
+		this.rect.fill = this.highlightColors[num];
 	};
 
 	baseBlock.isDirty = function(){
@@ -186,6 +191,7 @@ game.block = (function(){
 		game.world.dirtyEdgeBlocks--;
 		game.world.edgeList.remove(this.id);
 		this.rect.opacity = 0.0;
+		block.refreshGraph();
 
 		ablocks = this.getAdjacentBlocks();
 		for(i = 0, l = ablocks.length; i < l; i++){

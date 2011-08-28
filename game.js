@@ -81,7 +81,7 @@ var game = (function(){
 
 				state.currentBlock = block;
 
-				if(!block.isDirty() && block.isEdgeBlock() || block.isAdjacentToDirty()){
+				if(!block.isDirty() && (block.isEdgeBlock() || block.isAdjacentToDirty())){
 					block.highlightColor();
 				}
 			}

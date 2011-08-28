@@ -29,7 +29,7 @@ game.unit.unitBase = function(){
 		}
 
 		if(block){
-			block.highlightColor();
+			block.highlightColor(1);
 			adjacentBlock = this.getMoveToBlock(block);
 			this.setMoveTo(adjacentBlock);
 		}else{
@@ -67,8 +67,7 @@ game.unit.unitBase = function(){
 		for(key in edgeList){
 			block = edgeList[key];
 			if(block && block.isDirty()){
-				adjacentBlock = this.getMoveToBlock(block);
-				this.setMoveTo(adjacentBlock);
+				return block;
 			}
 		}
 	};
