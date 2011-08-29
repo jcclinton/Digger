@@ -83,9 +83,7 @@ shapeControl: function(t){
     , moveToBlock
 		;
 
-	//this.unit.moveUnit.call(this.unit);
-
-	if(u.data.isMe){
+	if(false && u.data.isMe){
 		d = u.data.range;
 		if ( this.root.keys.left )
 			this.x -= d;
@@ -95,8 +93,6 @@ shapeControl: function(t){
 			this.y -= d;
 		if (this.root.keys.down )
 			this.y += d;
-
-    //this.scale = 2.5+Math.cos(this.offset*Math.PI*4 + t/400);
 	}
 	this.fill = this.shapes.fill;
 	this.stroke = this.shapes.stroke;

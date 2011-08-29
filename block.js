@@ -266,9 +266,17 @@ game.block = (function(){
 				x = xArr[i];
 				y = yArr[j];
 				block = blocks[x][y];
-				if(x !== blockx || y !== blocky){
-					ret.push(blocks[x][y]);
+
+				// since the pathfinding heuristic cant do diagonals, ignore them
+				if(x !== blockx && y !== blocky){
+					continue;
 				}
+				// dont consider current block to be adjacent
+				if(x === blockx && y === blocky){
+					continue;
+				}
+
+				ret.push(blocks[x][y]);
 			}
 		}
 		return ret;

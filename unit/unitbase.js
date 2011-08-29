@@ -62,7 +62,7 @@ game.unit.unitBase = function(){
 			, l
 			;
 
-		block = block || this.getCurrentBlock(this.shape.x, this.shape.y);
+		block = block || this.getCurrentBlock();
 
 		blocks = block.getAdjacentBlocks();
 		for(i = 0, l = blocks.length; i < l; i++){
@@ -72,7 +72,11 @@ game.unit.unitBase = function(){
 		}
 	};
 
-	me.getCurrentBlock = function(x, y){
+	me.getCurrentBlock = function(){
+		var x = this.shape.x
+			, y = this.shape.y
+			;
+
 		return game.world.getBlockFromPixels(x, y);
 	};
 
@@ -98,7 +102,7 @@ game.unit.unitBase = function(){
 		this.colorBlock(block, false);
 
 		setTimeout(function(){
-			var currentBlock = that.getCurrentBlock(that.shape.x, that.shape.y);
+			var currentBlock = that.getCurrentBlock();
 			if(block.isAdjacentToThisBlock(currentBlock) === false){
 				that.data.state = 'idle';
 				return;
@@ -112,12 +116,60 @@ game.unit.unitBase = function(){
 		}, game.digTime);
 	};
 
-	me.setMoveTo = function(){
-		//this.data.state = 'moving';
+	me.setMoveTo = function(nextBlock){
+		var endx
+			, endy
+			, startx
+			, starty
+			, start
+			, end
+			, result
+			, currentBlock = this.getCurrentBlock()
+			, nodes = game.world.graph.nodes
+			, next
+			;
+
+		this.data.state = 'moving';
+
+		endx = nextBlock.blockx;
+		endy = nextBlock.blocky;
+		startx = currentBlock.blockx;
+		starty = currentBlock.blocky;
+
+		try{
+			start = nodes[startx][starty];
+			end = nodes[endx][endy];
+			result = astar.search(nodes, start, end);
+			this.data.nextPath = result;
+			if(this.data.nextPath && this.data.nextPath.length > 0){
+				next = this.data.nextPath.shift();
+				this.data.nextPos = game.world.blocksToPixels(next.x, next.y);
+			}else{
+				debugger;
+				console.warn('builder breakage');
+			}
+		}catch(e){
+			console.warn('ASTAR: ' + e);
+		}
 	};
 
 	me.move = function(){
-		this.data.state = 'idle';
+		var next
+			;
+
+		if(this.data.nextPos){
+			this.shape.x = this.data.nextPos.x + (game.world.blockSize/2 - 0);
+			this.shape.y = this.data.nextPos.y + (game.world.blockSize/2 + 1); // for some reason this looks better with an offset of +1
+		}
+
+
+		if(this.data.nextPath && this.data.nextPath.length > 0){
+			next = this.data.nextPath.shift();
+			this.data.nextPos = game.world.blocksToPixels(next.x, next.y);
+		}else{
+			this.data.state = 'idle';
+			this.data.nextPos = null;
+		}
 	};
 
 	return me;

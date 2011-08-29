@@ -2,8 +2,9 @@ var gameWorld = (function(){
 	var me = {}
 		, height = 200
 		, width = 350
-		, blockSize = 20
 		;
+
+	me.blockSize = 20;
 
 	me.dirtyEdgeBlocks = 0;
 
@@ -47,7 +48,7 @@ var gameWorld = (function(){
 
 
 	me.getBlockFromPixels = function(x, y){
-		var o = pixelsToBlocks(x, y)
+		var o = this.pixelsToBlocks(x, y)
 			, b
 			;
 
@@ -152,7 +153,7 @@ var gameWorld = (function(){
 	me.createBoard = function(){
 		var i
 			, j
-			, o = pixelsToBlocks(width, height)
+			, o = this.pixelsToBlocks(width, height)
 			, w = o.x
 			, h = o.y
 			, inner
@@ -172,9 +173,9 @@ var gameWorld = (function(){
 
 				// coordinates start at top left corner of rect
 				// todo: fix this to work with the coords
-				o = blocksToPixels(i, j);
+				o = this.blocksToPixels(i, j);
 
-				o.rect = new Rectangle(blockSize, blockSize, o);
+				o.rect = new Rectangle(this.blockSize, this.blockSize, o);
 
 				o.isEmpty = !v;
 				o.blockx = i;
@@ -188,26 +189,18 @@ var gameWorld = (function(){
 		return outer;
 	};
 
-
-	return me;
-
-
-
-
-	// PRIVATE FUNCTIONS
-
-
-
-
-	function pixelsToBlocks(x, y){
-		var blockx = x/blockSize | 0
-			, blocky = y/blockSize | 0
+	me.pixelsToBlocks = function(x, y){
+		var blockx = x/this.blockSize | 0
+			, blocky = y/this.blockSize | 0
 			;
 		return {x: blockx, y: blocky};
-	}
+	};
 
-	function blocksToPixels(x, y){
-		return {x: x*blockSize, y: y*blockSize};
-	}
+	me.blocksToPixels = function(x, y){
+		return {x: x*this.blockSize, y: y*this.blockSize};
+	};
+
+
+	return me;
 
 }());
