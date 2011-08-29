@@ -98,6 +98,11 @@ game.unit.unitBase = function(){
 		this.colorBlock(block, false);
 
 		setTimeout(function(){
+			var currentBlock = that.getCurrentBlock(that.shape.x, that.shape.y);
+			if(block.isAdjacentToThisBlock(currentBlock) === false){
+				that.data.state = 'idle';
+				return;
+			}
 			var charges = block.decrementCharge();
 			if(charges <= 0){
 				that.data.state = 'idle';

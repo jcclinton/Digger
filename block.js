@@ -134,6 +134,23 @@ game.block = (function(){
 		return false;
 	};
 
+	baseBlock.isAdjacentToThisBlock = function(otherBlock){
+		var ablocks
+			, block
+			, i
+			, l
+			;
+
+		ablocks = this.getAdjacentBlocks();
+		for(i = 0, l = ablocks.length; i < l; i++){
+			block = ablocks[i];
+			if(block === otherBlock){
+				return true;
+			}
+		}
+		return false;
+	};
+
 	baseBlock.isElgibleToBeDirty = function(){
 		var isClean = !this.isDirty()
 			, onEdge = game.world.edgeList.get(this.id)
